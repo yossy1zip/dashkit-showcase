@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d0d0d">
+<meta name="robots" content="noindex">
+<title>dashkit デモ(合成データ)</title>
+<!-- 静的なデモ。サーバーなしでファイルを開くだけで動く(外へのリクエストなし)。数字はすべて種つきの乱数で作った作り物。 -->
+<link rel="stylesheet" href="../kit.css">
+<link rel="icon" type="image/svg+xml" href="../icons/monitor.svg">
+<script src="../fa.js"></script>
+<script src="../fa-emoji.js"></script>
+<script src="../kit.js"></script>
+<style>
+  .demo-note{font-size:12px;color:var(--muted);margin:0 4px 10px}
+  .tile .v small{margin-left:2px}
+</style>
+</head>
+<body>
+<header class="kit-head">
+  <div class="kit-brand">🖥 MONITOR <i>dashkit demo</i></div>
+  <span class="badge warn">合成データ</span>
+</header>
+<main id="app">
+  <section class="tab">
+    <p class="demo-note">このページの数字・名前はすべて作り物です(種つき乱数)。kit.js / kit.css / fa.js だけで描いています。</p>
+    <div class="tiles" id="tiles"></div>
+    <div class="kit-cols">
+      <div class="col">
+        <section class="card"><h2>📈 CPU とメモリ(直近 24 時間)<span class="sub">1時間ごとの平均</span></h2><div id="g-line"></div></section>
+        <section class="card"><h2>📊 バックアップの量(直近 14 日)<span class="sub">GB/日</span></h2><div id="g-cols"></div></section>
+        <section class="card"><h2>🗓 アラートの数(日ごと・直近 13 週)</h2><div id="g-heat"></div></section>
+      </div>
+      <div class="col">
+        <section class="card"><h2>💾 ボリュームの使用率<span class="sub">縦線=先週</span></h2><div id="g-hb"></div></section>
+        <section class="card"><h2>📦 ストレージの内訳</h2><div id="g-stack"></div></section>
+        <section class="card"><h2>🔔 最近の出来事</h2><div class="list" id="events"></div></section>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+'use strict';
+// 種つきの乱数(毎回同じ絵になるように)
+function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 2 ** 32); }
+const r = rng(20261019), C = Kit.C;
+const round1 = v => Math.round(v * 10) / 10;
+
+// --- 数字のタイル
+const cpu = Array.from({ length: 24 }, (_, i) => round1(18 + 14 * Math.sin((i - 8) / 24 * 2 * Math.PI) ** 2 + r() * 9));
+const mem = Array.from({ length: 24 }, (_, i) => round1(52 + i * 0.35 + r() * 4));
+const tiles = [
+  { l: '稼働しているサービス', v: '12', u: '/ 12', d: Kit.delta(0, { suffix: ' 先週から' }) },
+  { l: 'CPU(いま)', v: cpu.at(-1), u: '%', sp: Kit.spark(cpu, { color: C.series[0] }) },
+  { l: 'メモリ(いま)', v: mem.at(-1), u: '%', sp: Kit.spark(mem, { color: C.series[1] }) },
+  { l: '未対応のアラート', v: '2', u: '件', d: Kit.delta(-3, { upGood: false, suffix: ' 件 昨日から' }) },
+];
+document.getElementById('tiles').innerHTML = tiles.map(t =>
+  `<div class="tile"><div class="l">${Kit.esc(t.l)}</div><div class="v">${Kit.esc(t.v)}<small>${Kit.esc(t.u)}</small></div>` +
+  (t.d ? `<div class="d">${t.d}</div>` : '') + (t.sp ? `<div class="sp">${t.sp}</div>` : '') + `</div>`).join('');
+
+// --- 折れ線(2系列・しきい値の参照線)
+Kit.line(document.getElementById('g-line'), {
+  xs: Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`),
+  series: [{ name: 'CPU', color: C.series[0], values: cpu }, { name: 'メモリ', color: C.series[1], values: mem }],
+  yFmt: v => v + '%', refs: [{ y: 80, label: '注意 80%' }], label: 'CPU とメモリの使用率',
+});
+
+// --- 縦棒(積み上げ)
+const days = Array.from({ length: 14 }, (_, i) => `10/${i + 6}`);
+Kit.columns(document.getElementById('g-cols'), {
+  cats: days, stacked: true, yFmt: v => v + ' GB', label: 'バックアップの量',
+  series: [
+    { name: 'データベース', color: C.series[0], values: days.map(() => round1(3 + r() * 2)) },
+    { name: '設定・ログ', color: C.series[2], values: days.map(() => round1(0.5 + r())) },
+    { name: '写真・文書', color: C.series[3], values: days.map((_, i) => round1(i % 7 === 6 ? 9 + r() * 3 : r() * 2)) },
+  ],
+});
+
+// --- カレンダー・ヒート
+const to = new Date(2026, 9, 18), from = new Date(to); from.setDate(to.getDate() - 7 * 13 + 1);
+const alerts = {};
+for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) alerts[Kit.dkey(d)] = Math.floor(r() ** 3 * 9);
+Kit.heatCal(document.getElementById('g-heat'), { from: Kit.dkey(from), to: Kit.dkey(to), values: alerts, min: 0, max: 8, fmt: v => v + ' 件', lo: '少', hi: '多', unit: '件', label: 'アラートの数' });
+
+// --- 横棒(先週の値を縦線で)
+const vols = [['/srv/example/db', 41, 38], ['/srv/example/media', 77, 71], ['/srv/example/backup', 63, 60], ['/srv/example/logs', 22, 25], ['/', 35, 34]];
+Kit.hbars(document.getElementById('g-hb'), {
+  max: 100, color: C.series[0],
+  rows: vols.map(([label, v, prev]) => ({ label, value: v, marker: prev, text: v + '%', sub: `先週 ${prev}%` })),
+});
+
+// --- 積み上げ1本(構成比)
+Kit.stackBar(document.getElementById('g-stack'), {
+  fmt: v => v + ' GB',
+  parts: [
+    { label: '写真・文書', value: 412, color: C.series[3] },
+    { label: 'バックアップ', value: 268, color: C.series[0] },
+    { label: 'データベース', value: 96, color: C.series[2] },
+    { label: 'その他', value: 54, color: C.series[6] },
+  ],
+});
+
+// --- 出来事の一覧(文字は esc を通す)
+const ev = [
+  ['good', '解決', 'backup ジョブが時間内に終わりました', '10/18 03:12'],
+  ['warn', '注意', '/srv/example/media の使用率が 75% を超えました', '10/17 21:40'],
+  ['serious', '対応中', 'example-app の応答が 2 秒を超えています', '10/17 14:05'],
+  ['good', '解決', '証明書を更新しました(example.com)', '10/16 09:30'],
+];
+document.getElementById('events').innerHTML = ev.map(([k, b, t, at]) =>
+  `<div class="it"><div class="row between"><span>${Kit.esc(t)}</span><span class="badge ${k}">${Kit.esc(b)}</span></div><div class="tiny muted">${Kit.esc(at)}</div></div>`).join('');
+</script>
+</body>
+</html>

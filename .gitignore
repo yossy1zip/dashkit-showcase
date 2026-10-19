@@ -1,0 +1,26 @@
+__pycache__/
+*.pyc
+gate.json
+gate-open
+brand/
+example-data/
+
+# クラウド用リポジトリ（2026-10-18）: 秘密・作業の出力・控えは入れない
+var/
+out/
+logs/
+*.db
+*.sqlite
+*.sqlite3
+*.log
+*.jsonl
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.bak-*
+*.orig
+.venv/
+venv/
+node_modules/

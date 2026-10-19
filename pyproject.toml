@@ -1,0 +1,22 @@
+# パッケージにはしない(部品をコピーして使う前提)。ここは lint と型検査の設定だけ。
+[tool.ruff]
+target-version = "py310"
+line-length = 220        # 既存のコードは1行が長め(表のような書き方)。折り返しの整形は強制しない
+
+[tool.ruff.lint]
+# E/W/F: 基本、I: import の順、B: よくある不具合、UP: 新しい書き方、S: セキュリティ(bandit 相当)、SIM: 簡潔に
+select = ["E", "W", "F", "I", "B", "UP", "S", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+# 試験: assert を使う・自分のスクリプトを子プロセスで動かす・127.0.0.1 にだけ urlopen する
+"tests/*" = ["S101", "S603", "S310"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["gate", "iconkit", "icons", "fa_build", "set_password"]
+
+[tool.mypy]
+python_version = "3.10"
+files = ["gate.py", "iconkit.py", "set_password.py", "fa_build.py", "example/app.py"]
+ignore_missing_imports = true
+check_untyped_defs = true
+warn_unused_ignores = true

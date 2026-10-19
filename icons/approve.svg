@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<defs>
+<linearGradient id="bg-approve" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="120" y2="512"><stop offset="0" stop-color="#a3e635"/><stop offset=".55" stop-color="#71a424"/><stop offset="1" stop-color="#3f6212"/></linearGradient>
+<linearGradient id="gl-approve" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="512"><stop offset="0" stop-color="#fff" stop-opacity=".40"/><stop offset=".30" stop-color="#fff" stop-opacity=".12"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".16"/></linearGradient>
+<radialGradient id="hl-approve" gradientUnits="userSpaceOnUse" cx="150" cy="-40" r="420"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<filter id="sh-approve" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="8"/><feOffset dy="8" result="b"/><feColorMatrix in="b" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .28 0" result="s"/><feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="512" height="512" rx="112" fill="url(#bg-approve)"/>
+<rect width="512" height="512" rx="112" fill="url(#hl-approve)"/>
+<rect width="512" height="512" rx="112" fill="url(#gl-approve)"/>
+<g filter="url(#sh-approve)"><path d="M174 112 H292 L372 192 V392 Q372 420 344 420 H178 Q150 420 150 392 V136 Q150 112 174 112 Z" fill="none" stroke="#fff" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/><path d="M292 112 V192 H372" fill="none" stroke="#fff" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/><path d="M200 308 L240 348 L318 262" fill="none" stroke="#fff" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/></g>
+<rect x="3" y="3" width="506" height="506" rx="109" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="4"/>
+</svg>

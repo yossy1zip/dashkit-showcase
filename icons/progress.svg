@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<defs>
+<linearGradient id="bg-progress" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="120" y2="512"><stop offset="0" stop-color="#4da3ff"/><stop offset=".55" stop-color="#4471ec"/><stop offset="1" stop-color="#3b3fd8"/></linearGradient>
+<linearGradient id="gl-progress" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="512"><stop offset="0" stop-color="#fff" stop-opacity=".40"/><stop offset=".30" stop-color="#fff" stop-opacity=".12"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".16"/></linearGradient>
+<radialGradient id="hl-progress" gradientUnits="userSpaceOnUse" cx="150" cy="-40" r="420"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<filter id="sh-progress" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="8"/><feOffset dy="8" result="b"/><feColorMatrix in="b" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .28 0" result="s"/><feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="512" height="512" rx="112" fill="url(#bg-progress)"/>
+<rect width="512" height="512" rx="112" fill="url(#hl-progress)"/>
+<rect width="512" height="512" rx="112" fill="url(#gl-progress)"/>
+<g filter="url(#sh-progress)"><path d="M373.9 223.7 A124 124 0 1 1 236.6 139.5" fill="none" stroke="#fff" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/><path d="M290.8 133.7 L234.5 95.3 L243.7 182.9 Z" fill="#fff" stroke="#fff" stroke-width="12" stroke-linejoin="round"/><path d="M232 222 L232 302 L304 262 Z" fill="#fff" stroke="#fff" stroke-width="14" stroke-linejoin="round"/></g>
+<rect x="3" y="3" width="506" height="506" rx="109" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="4"/>
+</svg>
